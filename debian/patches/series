@@ -11,3 +11,11 @@ ubuntu_calculator_snap.patch
 ubuntu_vino_handling.patch
 git-rfkill-set-the-g_io_channel-to-unbuffered-mode.patch
 git-media-keys-Add-one-second-delay-between-each-rfkill-.patch
+p11-kit/smartcard-Rewrite-to-use-p11-kit-backend-via-Gck-APIs.patch
+p11-kit/smartcard-manager-Use-Blocking-wait-for-slot-event-if-ava.patch
+p11-kit/smartcard-manager-Only-sync-token-state-if-it-really-chan.patch
+p11-kit/smartcard-utils-Free-the-type-name-when-registering-domai.patch
+p11-kit/smartcard-service-Unown-the-name-on-dispose.patch
+p11-kit/smartcard-Use-autopointers.patch
+p11-kit/smartcard-manager-Use-mutex-auto-lockers-when-convenient.patch
+p11-kit/smartcard-Add-utility-function-to-get-the-login-token-nam.patch

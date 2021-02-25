@@ -1,4 +1,3 @@
-From d7a414cbdb44e05b24a29534b2257ce97318039b Mon Sep 17 00:00:00 2001
 From: Hans de Goede <hdegoede@redhat.com>
 Date: Tue, 13 Apr 2021 21:16:24 +0200
 Subject: [PATCH] rfkill: set the g_io_channel to unbuffered mode
@@ -42,11 +41,11 @@ which allowed us to get away with using buffered io here.
  plugins/rfkill/rfkill-glib.c | 1 +
  1 file changed, 1 insertion(+)
 
-Index: gnome-settings-daemon/plugins/rfkill/rfkill-glib.c
-===================================================================
---- gnome-settings-daemon.orig/plugins/rfkill/rfkill-glib.c
-+++ gnome-settings-daemon/plugins/rfkill/rfkill-glib.c
-@@ -445,6 +445,7 @@ _cc_rfkill_glib_open (CcRfkillGlib  *rfk
+diff --git a/plugins/rfkill/rfkill-glib.c b/plugins/rfkill/rfkill-glib.c
+index 0dc26f9..22309dc 100644
+--- a/plugins/rfkill/rfkill-glib.c
++++ b/plugins/rfkill/rfkill-glib.c
+@@ -445,6 +445,7 @@ _cc_rfkill_glib_open (CcRfkillGlib  *rfkill,
  	/* Setup monitoring */
  	rfkill->channel = g_io_channel_unix_new (fd);
  	g_io_channel_set_encoding (rfkill->channel, NULL, NULL);

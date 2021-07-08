@@ -1,0 +1,56 @@
+From d7a414cbdb44e05b24a29534b2257ce97318039b Mon Sep 17 00:00:00 2001
+From: Hans de Goede <hdegoede@redhat.com>
+Date: Tue, 13 Apr 2021 21:16:24 +0200
+Subject: [PATCH] rfkill: set the g_io_channel to unbuffered mode
+
+Access to a /dev/foo device should never use buffered mode.
+
+While debugging a gsd-rfkill issue I noticed in the g_debug output
+that the rfkill-glib.c code now seems to be receiving bogus events.
+
+Doing a strace I noticed some read(dev_rfkill_fd, buf, 8) calls,
+even though we call:
+  g_io_channel_read_chars(..., sizeof(struct rfkill_event, ...)
+
+Which requests 9 bytes. The problem is the kernel expects us to
+read 1 event per read() system-call and it will throw away
+excess data. The idea is here that the rfkill_event struct can
+be extended by adding new fields at the end and then userspace code
+compiled against older kernel headers will still work since it
+will only read the fields it knows in a single call and the
+extra fields are thrown away.
+
+Since the rfkill-glib.c code was using buffered-io and asking
+g_io_channel_read_chars for 9 bytes when compiled against recent
+kernel headers, what would happen is that 2 events would be consumed
+in 2 read(fd, buf, 8) syscalls and then the first byte of the
+second event read would be appended to the previous event and
+the remaining 7 bytes would be used as the first 7 bytes for the
+next event (and eventually completed with the first 2 bytes of
+the next event, etc.). Leading to completely bogus events.
+
+Enabling unbuffered mode fixes this.
+
+Note this is a relatively new problem, caused by the kernel
+recently extending the rfkill_event struct with an extra byte-field:
+"rfkill: add a reason to the HW rfkill state"
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=14486c82612a177cb910980c70ba900827ca0894
+
+Before that kernel change the rfkill_event struct was 8 bytes large
+which allowed us to get away with using buffered io here.
+---
+ plugins/rfkill/rfkill-glib.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+Index: gnome-settings-daemon/plugins/rfkill/rfkill-glib.c
+===================================================================
+--- gnome-settings-daemon.orig/plugins/rfkill/rfkill-glib.c
++++ gnome-settings-daemon/plugins/rfkill/rfkill-glib.c
+@@ -445,6 +445,7 @@ _cc_rfkill_glib_open (CcRfkillGlib  *rfk
+ 	/* Setup monitoring */
+ 	rfkill->channel = g_io_channel_unix_new (fd);
+ 	g_io_channel_set_encoding (rfkill->channel, NULL, NULL);
++	g_io_channel_set_buffered (rfkill->channel, FALSE);
+ 	rfkill->watch_id = g_io_add_watch (rfkill->channel,
+ 					   G_IO_IN | G_IO_HUP | G_IO_ERR,
+ 					   (GIOFunc) event_cb,

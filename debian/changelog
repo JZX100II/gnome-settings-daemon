@@ -1,3 +1,13 @@
+gnome-settings-daemon (3.36.1-0ubuntu1.1) focal; urgency=medium
+
+  * d/p/git-rfkill-set-the-g_io_channel-to-unbuffered-mode.patch:
+    - Set the g_io_channel to unbuffered mode to fix airplane mode with
+      newer kernel versions (lp: #1926062)
+  * d/p/git-media-keys-Addd-one-second-delay-between-each-rfkill-.patch
+    - Add one second dely between each rfkill event (lp: #1936303)
+
+ -- Andy Chi <andy.chi@canonical.com>  Thu, 08 Jul 2021 17:35:19 +0800
+
 gnome-settings-daemon (3.36.1-0ubuntu1) focal; urgency=medium
 
   * New upstream version (lp: #1876263)

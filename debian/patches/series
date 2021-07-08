@@ -9,3 +9,5 @@ revert-mediakeys-dbus-interface-drop.patch
 ubuntu_ibus_configs.patch
 ubuntu_calculator_snap.patch
 ubuntu_vino_handling.patch
+git-rfkill-set-the-g_io_channel-to-unbuffered-mode.patch
+git-media-keys-Add-one-second-delay-between-each-rfkill-.patch

@@ -1,0 +1,29 @@
+From: Carlos Garnacho <carlosg@gnome.org>
+Date: Fri, 29 Apr 2022 14:37:27 +0200
+Subject: xsettings: Remove direct mapping from gtk-im-module to Gtk/IMModule
+
+This is now handled dynamically since commit e2d268eb00, so we should
+not tie dconf setting and Xsetting automatically here. Doing so, we
+are clobbering the dynamic value on startup, making it only effective
+on later changes.
+
+Origin: https://gitlab.gnome.org/GNOME/gnome-settings-daemon/-/merge_requests/296
+Bug: https://gitlab.gnome.org/GNOME/gnome-settings-daemon/-/issues/682
+Bug-Debian: https://bugs.debian.org/1009996
+Bug-Ubuntu: https://launchpad.net/bugs/1969637
+---
+ plugins/xsettings/gsd-xsettings-manager.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/plugins/xsettings/gsd-xsettings-manager.c b/plugins/xsettings/gsd-xsettings-manager.c
+index 7258c9cd..68b6ed77 100644
+--- a/plugins/xsettings/gsd-xsettings-manager.c
++++ b/plugins/xsettings/gsd-xsettings-manager.c
+@@ -519,7 +519,6 @@ static TranslationEntry translations [] = {
+         { "org.gnome.desktop.interface", "cursor-blink-time",      "Net/CursorBlinkTime",     translate_int_int },
+         { "org.gnome.desktop.interface", "cursor-blink-timeout",   "Gtk/CursorBlinkTimeout",  translate_int_int },
+         { "org.gnome.desktop.interface", "gtk-theme",              "Net/ThemeName",           translate_theme_name },
+-        { "org.gnome.desktop.interface", "gtk-im-module",          "Gtk/IMModule",            translate_string_string },
+         { "org.gnome.desktop.interface", "icon-theme",             "Net/IconThemeName",       translate_theme_name },
+         { "org.gnome.desktop.interface", "cursor-theme",           "Gtk/CursorThemeName",     translate_string_string },
+         { "org.gnome.desktop.interface", "gtk-enable-primary-paste", "Gtk/EnablePrimaryPaste", translate_bool_int },

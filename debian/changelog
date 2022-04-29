@@ -1,3 +1,10 @@
+gnome-settings-daemon (42.1-1ubuntu2.1) jammy; urgency=medium
+
+  * d/p/u/xsettings_Remove_direct_mapping_from_gtk-im-module_to_G.patch:
+    - Upstream MR which fixes IBus config. issue on x11 (LP: #1969637)
+
+ -- Gunnar Hjalmarsson <gunnarhj@ubuntu.com>  Sat, 30 Apr 2022 00:26:51 +0200
+
 gnome-settings-daemon (42.1-1ubuntu2) jammy; urgency=medium
 
   * Drop Revert-sharing-Don-t-manage-gnome-remote-desktop.patch

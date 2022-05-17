@@ -67,7 +67,7 @@ Depends: gnome-settings-daemon-common (= ${source:Version}),
          ${misc:Depends},
          ${shlibs:Depends}
 Recommends: iio-sensor-proxy,
-            pulseaudio,
+            pipewire-pulse,
             x11-xserver-utils
 Suggests: usbguard
 Breaks: afterstep (<< 2.2.12-11.1~),

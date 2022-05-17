@@ -1,8 +1,8 @@
-gnome-settings-daemon (42.1-1ubuntu4) UNRELEASED; urgency=medium
+gnome-settings-daemon (42.1-1ubuntu4) kinetic; urgency=medium
 
   * debian/control.in: recommends pipewire-pulse instead of pulseaudio
 
- -- Sebastien Bacher <seb128@ubuntu.com>  Tue, 17 May 2022 16:15:31 +0200
+ -- Sebastien Bacher <seb128@ubuntu.com>  Tue, 17 May 2022 16:18:32 +0200
 
 gnome-settings-daemon (42.1-1ubuntu3) kinetic; urgency=medium
 

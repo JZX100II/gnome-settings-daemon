@@ -1,3 +1,52 @@
+gnome-settings-daemon (42.2-1ubuntu1) UNRELEASED; urgency=medium
+
+  * Merge with Debian. Remaining changes:
+    + debian/control.in:
+      - Build-depend on accountsservice
+      - Drop build-dependency on libnss-dev and add to libgck-1-dev
+      - Recommend pipewire-pulse instead of pulseaudio
+    + debian/patches/ubuntu:
+      - keyboard-sync-input-sources-to-accountsservice.patch
+      - keyboard-Use-ibus-sources-from-locale.patch
+      - lid-close-suspend-support.patch
+      - media-keys-correct-logout-action.patch
+      - media-keys-restore-terminal-keyboard-shortcut-schema.patch
+      - print-notifications-suppress-printer-may-not-be-connected.patch
+      - teach-gsd-about-the-gnome-calculator-snap-.desktop-name.patch
+    + debian/patches/p11-kit:
+      - Use p11-kit (via gck) as smartcards backend
+    + debian/gnome-settings-daemon.install:
+      - Install apport hook
+
+ -- Gunnar Hjalmarsson <gunnarhj@ubuntu.com>  Wed, 01 Jun 2022 15:02:55 +0200
+
+gnome-settings-daemon (42.2-1) unstable; urgency=medium
+
+  * Team upload
+  * New upstream release (LP: #1969637)
+  * Bump Standards-Version to 4.6.1
+
+ -- Gunnar Hjalmarsson <gunnarhj@debian.org>  Wed, 01 Jun 2022 12:47:39 +0200
+
+gnome-settings-daemon (42.1-3) unstable; urgency=medium
+
+  * Drop Revert-sharing-Don-t-manage-gnome-remote-desktop.patch
+    - gnome-remote-desktop 42 provides its own systemd user session
+      to start itself
+
+ -- Jeremy Bicha <jbicha@ubuntu.com>  Wed, 13 Apr 2022 15:15:17 -0400
+
+gnome-settings-daemon (42.1-2) unstable; urgency=medium
+
+  * Team upload
+
+  [ Jeremy Bicha ]
+  * Seitch back to libgweather4
+  * debian/control.in: Build-Depend on libgweather4
+  * debian/control.in: Break older gnome-control-center (Closes: #1008493)
+
+ -- Simon McVittie <smcv@debian.org>  Tue, 29 Mar 2022 19:10:46 +0100
+
 gnome-settings-daemon (42.1-1ubuntu4) kinetic; urgency=medium
 
   * debian/control.in: recommends pipewire-pulse instead of pulseaudio

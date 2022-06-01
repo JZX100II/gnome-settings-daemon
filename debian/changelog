@@ -13,6 +13,7 @@ gnome-settings-daemon (42.2-1ubuntu1) UNRELEASED; urgency=medium
       - media-keys-restore-terminal-keyboard-shortcut-schema.patch
       - print-notifications-suppress-printer-may-not-be-connected.patch
       - teach-gsd-about-the-gnome-calculator-snap-.desktop-name.patch
+      - Revert-media-keys-fix-gnome-settings-desktop-file.patch
     + debian/patches/p11-kit:
       - Use p11-kit (via gck) as smartcards backend
     + debian/gnome-settings-daemon.install:

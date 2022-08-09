@@ -1,3 +1,35 @@
+gnome-settings-daemon (43~beta-1ubuntu1) UNRELEASED; urgency=medium
+
+  * Merge with Debian. Remaining changes:
+    + debian/control.in:
+      - Build-depend on accountsservice
+      - Drop build-dependency on libnss-dev and add libgck-1-dev
+      - Recommend pipewire-pulse instead of pulseaudio
+    + debian/patches/ubuntu:
+      - keyboard-sync-input-sources-to-accountsservice.patch
+      - keyboard-Use-ibus-sources-from-locale.patch
+      - lid-close-suspend-support.patch
+      - media-keys-correct-logout-action.patch
+      - media-keys-restore-terminal-keyboard-shortcut-schema.patch
+      - print-notifications-suppress-printer-may-not-be-connected.patch
+      - teach-gsd-about-the-gnome-calculator-snap-.desktop-name.patch
+      - Revert-media-keys-fix-gnome-settings-desktop-file.patch
+    + debian/patches/p11-kit:
+      - Use p11-kit (via gck) as smartcards backend
+    + debian/gnome-settings-daemon.install:
+      - Install apport hook
+
+ -- Gunnar Hjalmarsson <gunnarhj@ubuntu.com>  Wed, 01 Jun 2022 15:29:11 +0200
+
+gnome-settings-daemon (43~beta-1) unstable; urgency=medium
+
+  * New upstream release
+    - Unset GDK_BACKEND envvar if a specific backend is needed
+      (Closes: #1008992)
+  * debian/rules: Keep building using gcr3 for now
+
+ -- Jeremy Bicha <jbicha@ubuntu.com>  Tue, 09 Aug 2022 16:03:26 -0400
+
 gnome-settings-daemon (42.2-1ubuntu2) kinetic; urgency=medium
 
   * Rebuild against latest gnome-desktop
@@ -1027,7 +1059,7 @@ gnome-settings-daemon (3.31.90-1ubuntu1) disco; urgency=medium
 
 gnome-settings-daemon (3.31.90-1) experimental; urgency=medium
 
-  * New upstream development release 
+  * New upstream development release
   * Drop Build-Depend on libxtst-dev
   * Drop patch: applied in new release
 

@@ -7,7 +7,7 @@ Section: gnome
 Priority: optional
 Maintainer: Ubuntu Desktop Team <ubuntu-desktop@lists.ubuntu.com>
 XSBC-Original-Maintainer: Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.org>
-Uploaders: Gunnar Hjalmarsson <gunnarhj@debian.org>, Iain Lane <laney@debian.org>, Jeremy Bicha <jbicha@ubuntu.com>, Laurent Bigonville <bigon@debian.org>
+Uploaders: Gunnar Hjalmarsson <gunnarhj@debian.org>, Jeremy Bicha <jbicha@ubuntu.com>, Laurent Bigonville <bigon@debian.org>
 Build-Depends: debhelper-compat (= 13),
                dh-exec,
                dh-sequence-gnome,
@@ -23,7 +23,7 @@ Build-Depends: debhelper-compat (= 13),
                libgck-1-dev (>= 3.36.0),
                libgcr-3-dev (>= 3.7.5) [linux-any],
                libgeoclue-2-dev (>= 2.3.1),
-               libgeocode-glib-dev (>= 3.36.3),
+               libgeocode-glib-dev (>= 3.26.3),
                libglib2.0-dev (>= 2.56),
                libglib2.0-dev:native (>= 2.58),
                libgnome-desktop-3-dev (>= 3.37.1),

@@ -1,4 +1,4 @@
-gnome-settings-daemon (43~rc-1ubuntu1) UNRELEASED; urgency=medium
+gnome-settings-daemon (43~rc-1ubuntu1) kinetic; urgency=medium
 
   * Merge with Debian. Remaining changes:
     + debian/control.in:
@@ -19,7 +19,7 @@ gnome-settings-daemon (43~rc-1ubuntu1) UNRELEASED; urgency=medium
     + debian/gnome-settings-daemon.install:
       - Install apport hook
 
- -- Jeremy Bicha <jbicha@ubuntu.com>  Mon, 05 Sep 2022 16:39:46 -0400
+ -- Jeremy Bicha <jbicha@ubuntu.com>  Mon, 05 Sep 2022 16:49:02 -0400
 
 gnome-settings-daemon (43~rc-1) unstable; urgency=medium
 

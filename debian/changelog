@@ -1,4 +1,4 @@
-gnome-settings-daemon (43.0-1ubuntu1) UNRELEASED; urgency=medium
+gnome-settings-daemon (43.0-1ubuntu1) kinetic; urgency=medium
 
   * Merge with Debian. Remaining changes:
     + debian/control.in:

@@ -18,4 +18,4 @@ index f4c5755..2b8d80f 100644
 +                do_execute_desktop_or_desktop (manager, "org.gnome.Calculator.desktop", "gnome-calculator_gnome-calculator.desktop", timestamp);
                  break;
          case CONTROL_CENTER_KEY:
-                 do_execute_desktop_or_desktop (manager, "gnome-control-center.desktop", NULL, timestamp);
+                 do_execute_desktop_or_desktop (manager, "org.gnome.Settings.desktop", NULL, timestamp);

@@ -1,3 +1,32 @@
+gnome-settings-daemon (43.0-4) unstable; urgency=medium
+
+  * Use the new pipewire-audio metapackage instead of listing the individual
+    components
+
+ -- Laurent Bigonville <bigon@debian.org>  Wed, 25 Jan 2023 13:52:38 +0100
+
+gnome-settings-daemon (43.0-3) unstable; urgency=medium
+
+  * Team upload
+  * d/control.in: Change Build-Depends from transitional policykit-1 to
+    polkitd
+  * d/control.in: Add Recommends on pkexec.
+    Two plugins (for laptop backlights and Wacom devices) run commands via
+    pkexec.
+  * d/patches: Update translations from upstream
+
+ -- Simon McVittie <smcv@debian.org>  Fri, 14 Oct 2022 11:00:56 +0100
+
+gnome-settings-daemon (43.0-2) unstable; urgency=medium
+
+  * Depend on libspa-0.2-bluetooth, pipewire & wireplumber
+  * Allow alternate Depends on the pulseaudio equivalents
+  * Also add Recommends without the pulseaudio alternates
+    so that upgraders get the recommended default as long as
+    they install Recommends
+
+ -- Jeremy Bicha <jbicha@ubuntu.com>  Mon, 26 Sep 2022 17:26:23 -0400
+
 gnome-settings-daemon (43.0-1ubuntu1) kinetic; urgency=medium
 
   * Merge with Debian. Remaining changes:

@@ -169,7 +169,7 @@ index fc6ae0b..ae034d1 100644
  static gpointer manager_object = NULL;
  
  static void
-@@ -95,95 +83,176 @@ gsd_smartcard_manager_init (GsdSmartcardManager *self)
+@@ -95,96 +83,176 @@ gsd_smartcard_manager_init (GsdSmartcardManager *self)
  {
  }
  
@@ -223,7 +223,6 @@ index fc6ae0b..ae034d1 100644
  
 -        if (context == NULL) {
 -                gsize error_message_size;
--                char *error_message;
 +        for (l = slots; l; l = l->next) {
 +                GckSlot *slot = l->data;
  
@@ -235,6 +234,8 @@ index fc6ae0b..ae034d1 100644
 -                if (error_message_size == 0) {
 -                        g_debug ("NSS security system could not be initialized");
 -                } else {
+-                        char *error_message;
+-
 -                        error_message = g_alloca (error_message_size);
 -                        PR_GetErrorText (error_message);
 +        return NULL;

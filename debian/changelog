@@ -1,4 +1,4 @@
-gnome-settings-daemon (43.0-4ubuntu1) UNRELEASED; urgency=medium
+gnome-settings-daemon (43.0-4ubuntu1) lunar; urgency=medium
 
   * Merge with Debian. Remaining changes:
     + debian/control.in:

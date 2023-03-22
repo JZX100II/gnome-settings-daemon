@@ -18,3 +18,4 @@ ubuntu/keyboard-Use-ibus-sources-from-locale.patch
 ubuntu/Revert-media-keys-fix-gnome-settings-desktop-file.patch
 ubuntu/teach-gsd-about-the-gnome-calculator-snap-.desktop-name.patch
 ubuntu/xsettings_Remove_direct_mapping_from_gtk-im-module_to_G.patch
+gitlab_nmsignal_deprecated.patch

@@ -1,3 +1,11 @@
+gnome-settings-daemon (43.0-1ubuntu1.1) kinetic; urgency=medium
+
+  * debian/patches/gitlab_nmsignal_deprecated.patch:
+    - cherrypick a change proposed upstream to fix airplane mode on some
+      Lenovo laptops (lp: #2011770)
+
+ -- Sebastien Bacher <seb128@ubuntu.com>  Wed, 22 Mar 2023 11:05:29 +0100
+
 gnome-settings-daemon (43.0-1ubuntu1) kinetic; urgency=medium
 
   * Merge with Debian. Remaining changes:

@@ -1,3 +1,15 @@
+gnome-settings-daemon (44.0-1) experimental; urgency=medium
+
+  [ Jeremy Bicha ]
+  * New upstream release
+
+  [ Sebastien Bacher ]
+  * Add gitlab_nmsignal_deprecated.patch:
+    - cherrypick a change in review upstream to fix airplane mode on some
+      Lenovo laptops (LP: #2011770)
+
+ -- Jeremy Bicha <jbicha@ubuntu.com>  Mon, 27 Mar 2023 08:20:57 -0400
+
 gnome-settings-daemon (44~rc-1ubuntu2) lunar; urgency=medium
 
   * debian/patches/gitlab_nmsignal_deprecated.patch:

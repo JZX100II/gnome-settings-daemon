@@ -1,3 +1,25 @@
+gnome-settings-daemon (44.1-1ubuntu1) mantic; urgency=medium
+
+  * Merge with Debian. Remaining changes:
+    + debian/control.in:
+      - Build-depend on accountsservice
+      - Drop build-dependency on libnss-dev and add libgck-1-dev
+      - Recommend pipewire-pulse instead of pulseaudio
+    + debian/patches/ubuntu:
+      - keyboard-sync-input-sources-to-accountsservice.patch
+      - keyboard-Use-ibus-sources-from-locale.patch
+      - lid-close-suspend-support.patch
+      - media-keys-correct-logout-action.patch
+      - media-keys-restore-terminal-keyboard-shortcut-schema.patch
+      - print-notifications-suppress-printer-may-not-be-connected.patch
+      - teach-gsd-about-the-gnome-calculator-snap-.desktop-name.patch
+    + debian/patches/p11-kit:
+      - Use p11-kit (via gck) as smartcards backend
+    + debian/gnome-settings-daemon.install:
+      - Install apport hook 
+
+ -- Jarred Wilson <jarred.wilson@canonical.com>  Wed, 24 May 2023 13:22:50 -0400
+
 gnome-settings-daemon (44.1-1) experimental; urgency=medium
 
   * New upstream release

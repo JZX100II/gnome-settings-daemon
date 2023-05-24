@@ -6,17 +6,15 @@ Ignore doing updates if the token state didn't change.
 
 This should not matter in normal scenario, but it does when we're using
 the fallback function to check if the smartcard token changed.
-
-Origin: https://gitlab.gnome.org/GNOME/gnome-settings-daemon/-/merge_requests/208
 ---
  plugins/smartcard/gsd-smartcard-manager.c | 19 +++++++++++--------
  1 file changed, 11 insertions(+), 8 deletions(-)
 
 diff --git a/plugins/smartcard/gsd-smartcard-manager.c b/plugins/smartcard/gsd-smartcard-manager.c
-index a6ee8fb..1475112 100644
+index 05264cd..f5529bc 100644
 --- a/plugins/smartcard/gsd-smartcard-manager.c
 +++ b/plugins/smartcard/gsd-smartcard-manager.c
-@@ -334,20 +334,23 @@ watch_one_event_from_module (GsdSmartcardManager       *self,
+@@ -351,20 +351,23 @@ watch_one_event_from_module (GsdSmartcardManager       *self,
                           * removal
                           */
                          gsd_smartcard_service_sync_token (self->service, slot, cancellable);

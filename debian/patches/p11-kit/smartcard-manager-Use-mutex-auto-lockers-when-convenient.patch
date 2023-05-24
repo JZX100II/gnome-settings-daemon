@@ -2,16 +2,15 @@ From: =?utf-8?b?Ik1hcmNvIFRyZXZpc2FuIChUcmV2acOxbyki?= <mail@3v1n0.net>
 Date: Sat, 14 Nov 2020 02:29:27 +0100
 Subject: smartcard-manager: Use mutex auto-lockers when convenient
 
-Origin: https://gitlab.gnome.org/GNOME/gnome-settings-daemon/-/merge_requests/208
 ---
  plugins/smartcard/gsd-smartcard-manager.c | 13 +++++++------
  1 file changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/plugins/smartcard/gsd-smartcard-manager.c b/plugins/smartcard/gsd-smartcard-manager.c
-index 74c8b7b..b7b768f 100644
+index f629996..e5e323d 100644
 --- a/plugins/smartcard/gsd-smartcard-manager.c
 +++ b/plugins/smartcard/gsd-smartcard-manager.c
-@@ -411,10 +411,11 @@ static void
+@@ -428,10 +428,11 @@ static void
  on_smartcards_watch_task_destroyed (GsdSmartcardManager *self,
                                      GTask               *freed_task)
  {
@@ -25,7 +24,7 @@ index 74c8b7b..b7b768f 100644
  }
  
  static void
-@@ -772,10 +773,11 @@ get_login_token_for_operation (GsdSmartcardManager      *self,
+@@ -790,10 +791,11 @@ get_login_token_for_operation (GsdSmartcardManager      *self,
  GckSlot *
  gsd_smartcard_manager_get_login_token (GsdSmartcardManager *self)
  {
@@ -38,7 +37,7 @@ index 74c8b7b..b7b768f 100644
          node = self->smartcards_watch_tasks;
          while (node != NULL) {
                  GTask *task = node->data;
-@@ -788,7 +790,6 @@ gsd_smartcard_manager_get_login_token (GsdSmartcardManager *self)
+@@ -806,7 +808,6 @@ gsd_smartcard_manager_get_login_token (GsdSmartcardManager *self)
  
                  node = node->next;
          }
@@ -46,7 +45,7 @@ index 74c8b7b..b7b768f 100644
  
          return card_slot;
  }
-@@ -816,9 +817,10 @@ GList *
+@@ -834,9 +835,10 @@ GList *
  gsd_smartcard_manager_get_inserted_tokens (GsdSmartcardManager *self,
                                             gsize               *num_tokens)
  {
@@ -58,7 +57,7 @@ index 74c8b7b..b7b768f 100644
          for (node = self->smartcards_watch_tasks; node != NULL; node = node->next) {
                  GTask *task = node->data;
                  WatchSmartcardsOperation *operation = g_task_get_task_data (task);
-@@ -828,7 +830,6 @@ gsd_smartcard_manager_get_inserted_tokens (GsdSmartcardManager *self,
+@@ -846,7 +848,6 @@ gsd_smartcard_manager_get_inserted_tokens (GsdSmartcardManager *self,
  
                  inserted_tokens = g_list_concat (inserted_tokens, operation_inserted_tokens);
          }

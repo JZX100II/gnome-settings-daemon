@@ -2,7 +2,6 @@ From: =?utf-8?b?Ik1hcmNvIFRyZXZpc2FuIChUcmV2acOxbyki?= <mail@3v1n0.net>
 Date: Sat, 14 Nov 2020 01:24:46 +0100
 Subject: smartcard-service: Unown the name on dispose
 
-Origin: https://gitlab.gnome.org/GNOME/gnome-settings-daemon/-/merge_requests/208
 ---
  plugins/smartcard/gsd-smartcard-service.c | 2 ++
  1 file changed, 2 insertions(+)

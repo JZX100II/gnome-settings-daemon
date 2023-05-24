@@ -8,3 +8,13 @@ ubuntu/media-keys-correct-logout-action.patch
 ubuntu/lid-close-suspend-support.patch
 ubuntu/keyboard-Use-ibus-sources-from-locale.patch
 ubuntu/teach-gsd-about-the-gnome-calculator-snap-.desktop-name.patch
+p11-kit/smartcard-Rewrite-to-use-p11-kit-backend-via-Gck-APIs.patch
+p11-kit/smartcard-manager-Use-Blocking-wait-for-slot-event-if-ava.patch
+p11-kit/gsd-smartcard-manager-Avoid-sleeping-if-the-card-supports.patch
+p11-kit/smartcard-manager-Only-sync-token-state-if-it-really-chan.patch
+p11-kit/smartcard-utils-Free-the-type-name-when-registering-domai.patch
+p11-kit/smartcard-service-Unown-the-name-on-dispose.patch
+p11-kit/smartcard-Use-autopointers.patch
+p11-kit/smartcard-manager-Use-mutex-auto-lockers-when-convenient.patch
+p11-kit/smartcard-Add-utility-function-to-get-the-login-token-nam.patch
+p11-kit/smartcard-manager-Ignore-slots-with-invalid-tokens.patch

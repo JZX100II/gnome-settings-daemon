@@ -9,14 +9,12 @@ Cancellation is handled by the module Finalization, that will cause
 the function to return CKR_CRYPTOKI_NOT_INITIALIZED.
 
 Fixes: #439
-
-Origin: https://gitlab.gnome.org/GNOME/gnome-settings-daemon/-/merge_requests/208
 ---
  plugins/smartcard/gsd-smartcard-manager.c | 14 +++++++++-----
  1 file changed, 9 insertions(+), 5 deletions(-)
 
 diff --git a/plugins/smartcard/gsd-smartcard-manager.c b/plugins/smartcard/gsd-smartcard-manager.c
-index ae034d1..a6ee8fb 100644
+index edc9bba..995ede2 100644
 --- a/plugins/smartcard/gsd-smartcard-manager.c
 +++ b/plugins/smartcard/gsd-smartcard-manager.c
 @@ -132,12 +132,16 @@ wait_for_any_slot_event (GckModule  *module,
@@ -39,5 +37,5 @@ index ae034d1..a6ee8fb 100644
 +                ret = p11_module->C_WaitForSlotEvent (CKF_DONT_BLOCK, &slot_id, NULL);
 +        }
  
-         if (ret == CKR_NO_EVENT) {
-                 g_set_error (error, G_IO_ERROR, G_IO_ERROR_AGAIN,
+         switch (ret) {
+         case CKR_NO_EVENT:

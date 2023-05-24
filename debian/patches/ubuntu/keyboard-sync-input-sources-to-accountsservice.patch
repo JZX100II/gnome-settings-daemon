@@ -4,12 +4,12 @@ Subject: keyboard: sync input sources to accountsservice
 
 ---
  meson.build                               |  1 +
- plugins/xsettings/gsd-xsettings-manager.c | 78 +++++++++++++++++++++++++++++++
+ plugins/xsettings/gsd-xsettings-manager.c | 86 +++++++++++++++++++++++++++++++
  plugins/xsettings/meson.build             |  1 +
- 3 files changed, 80 insertions(+)
+ 3 files changed, 88 insertions(+)
 
 diff --git a/meson.build b/meson.build
-index 2a00878..7056a1c 100644
+index fc1b913..3c42051 100644
 --- a/meson.build
 +++ b/meson.build
 @@ -88,6 +88,7 @@ endif
@@ -21,7 +21,7 @@ index 2a00878..7056a1c 100644
  geocode_glib_dep = dependency('geocode-glib-2.0', version: '>= 3.26.3', required: false)
  if not geocode_glib_dep.found()
 diff --git a/plugins/xsettings/gsd-xsettings-manager.c b/plugins/xsettings/gsd-xsettings-manager.c
-index 567d3bbd..b090be45 100644
+index a357100..4963791 100644
 --- a/plugins/xsettings/gsd-xsettings-manager.c
 +++ b/plugins/xsettings/gsd-xsettings-manager.c
 @@ -38,6 +38,8 @@

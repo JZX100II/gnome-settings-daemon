@@ -38,7 +38,7 @@ index ef5be62..590d52d 100644
        <default>['']</default>
        <summary>Launch web browser</summary>
 diff --git a/plugins/media-keys/gsd-media-keys-manager.c b/plugins/media-keys/gsd-media-keys-manager.c
-index 688baed..4b45532 100644
+index 15e96e0..73f4c21 100644
 --- a/plugins/media-keys/gsd-media-keys-manager.c
 +++ b/plugins/media-keys/gsd-media-keys-manager.c
 @@ -1103,6 +1103,22 @@ gnome_session_shutdown_cb (GObject *source_object,
@@ -64,7 +64,7 @@ index 688baed..4b45532 100644
  static void
  gnome_session_shutdown (GsdMediaKeysManager *manager)
  {
-@@ -2407,6 +2423,9 @@ do_action (GsdMediaKeysManager *manager,
+@@ -2401,6 +2417,9 @@ do_action (GsdMediaKeysManager *manager,
          case HELP_KEY:
                  do_url_action (manager, "ghelp", timestamp);
                  break;
@@ -74,7 +74,7 @@ index 688baed..4b45532 100644
          case WWW_KEY:
                  do_url_action (manager, "http", timestamp);
                  break;
-@@ -2981,6 +3000,7 @@ migrate_keybinding_settings (void)
+@@ -2975,6 +2994,7 @@ migrate_keybinding_settings (void)
                  { "volume-mute",                "volume-mute",                  map_keybinding },
                  { "volume-up",                  "volume-up",                    map_keybinding },
                  { "mic-mute",                   "mic-mute",                     map_keybinding },

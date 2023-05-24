@@ -16,7 +16,8 @@ gnome-settings-daemon (44.1-1ubuntu1) mantic; urgency=medium
     + debian/patches/p11-kit:
       - Use p11-kit (via gck) as smartcards backend
     + debian/gnome-settings-daemon.install:
-      - Install apport hook 
+      - Install apport hook
+  * Update the p11-kit patches with latest version from upstream !208
 
  -- Jarred Wilson <jarred.wilson@canonical.com>  Wed, 24 May 2023 13:22:50 -0400
 

@@ -58,7 +58,7 @@ Related to: #439
  9 files changed, 401 insertions(+), 495 deletions(-)
 
 diff --git a/meson.build b/meson.build
-index 3c42051..e8ef7c7 100644
+index 47680a6..37253f9 100644
 --- a/meson.build
 +++ b/meson.build
 @@ -168,12 +168,7 @@ config_h.set10('HAVE_WACOM', enable_wacom)

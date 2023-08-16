@@ -9,7 +9,7 @@ This reverts commit 58cb4eee64bbd8ca43111b1f80fdaacde8ad5f12.
  1 file changed, 22 insertions(+)
 
 diff --git a/data/org.gnome.settings-daemon.plugins.power.gschema.xml.in b/data/org.gnome.settings-daemon.plugins.power.gschema.xml.in
-index f20b243..e0ec9b6 100644
+index 051bcf7..010779a 100644
 --- a/data/org.gnome.settings-daemon.plugins.power.gschema.xml.in
 +++ b/data/org.gnome.settings-daemon.plugins.power.gschema.xml.in
 @@ -31,6 +31,28 @@

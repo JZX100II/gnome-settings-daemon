@@ -7,7 +7,7 @@ Section: gnome
 Priority: optional
 Maintainer: Ubuntu Desktop Team <ubuntu-desktop@lists.ubuntu.com>
 XSBC-Original-Maintainer: Debian GNOME Maintainers <pkg-gnome-maintainers@lists.alioth.debian.org>
-Uploaders: Jeremy Bicha <jbicha@ubuntu.com>, Laurent Bigonville <bigon@debian.org>
+Uploaders: Amin Bandali <bandali@ubuntu.com>, Gunnar Hjalmarsson <gunnarhj@debian.org>, Jeremy Bícha <jbicha@ubuntu.com>, Laurent Bigonville <bigon@debian.org>, Marco Trevisan (Treviño) <marco@ubuntu.com>
 Build-Depends: debhelper-compat (= 13),
                dh-exec,
                dh-sequence-gnome,
@@ -19,7 +19,7 @@ Build-Depends: debhelper-compat (= 13),
                libcanberra-gtk3-dev,
                libcolord-dev (>= 1.4.5) [linux-any],
                libcups2-dev,
-               libfontconfig1-dev,
+               libfontconfig-dev,
                libgck-1-dev (>= 3.36.0),
                libgcr-3-dev (>= 3.7.5) [linux-any],
                libgeoclue-2-dev (>= 2.3.1),

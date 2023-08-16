@@ -1,3 +1,49 @@
+================
+Version 45.beta
+================
+- Translation updates
+- Fix linkage of GResources
+
+USB protection:
+- Change wording of notification
+
+================
+Version 45.alpha
+================
+- Translation updates
+
+Housekeeping:
+- Clean up x-large and xx-large thumbnails
+
+Power:
+- Respect the "nothing" power-button-action for VMs
+- Expose number of supported steps for keyboard backlight
+
+Screensaver:
+- Better explain why out-of-spec D-Bus methods don't work
+
+USB protection:
+- Fix race conditions and other general improvements
+
+============
+Version 44.1
+============
+- Translation updates
+- Build improvements
+
+Power:
+- Connect to light sensor asynchronously
+- Initialize check for VM environment earlier
+
+Rfkill:
+- Monitor WwanEnabled property changes properly
+
+Smartcards:
+- Check for the addition of new smartcard readers
+
+Xsettings:
+- Do not force deprecated High Contrast icon theme
+
 ============
 Version 44.1
 ============

@@ -1,5 +1,4 @@
 debian/01_debianize_xrdb.patch
-debian/meson.build-Lower-polkit-requirement.patch
 ubuntu/print-notifications-suppress-printer-may-not-be-connected.patch
 ubuntu/keyboard-sync-input-sources-to-accountsservice.patch
 ubuntu/media-keys-restore-terminal-keyboard-shortcut-schema.patch

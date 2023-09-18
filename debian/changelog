@@ -1,3 +1,11 @@
+gnome-settings-daemon (45.0-1) unstable; urgency=medium
+
+  * New upstream release
+  * Bump minimum libpolkit-gobject-1-dev to 0.114
+  * Drop obsolete patch that lowered required policykit to build
+
+ -- Jeremy Bícha <jbicha@ubuntu.com>  Mon, 18 Sep 2023 14:32:16 -0400
+
 gnome-settings-daemon (45~rc-1ubuntu1) mantic; urgency=medium
 
   * Merge with Debian. Remaining changes:

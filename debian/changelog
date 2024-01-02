@@ -1,3 +1,44 @@
+gnome-settings-daemon (45.1-1) unstable; urgency=medium
+
+  * New upstream release
+
+ -- Jeremy Bícha <jbicha@ubuntu.com>  Tue, 02 Jan 2024 12:25:52 -0500
+
+gnome-settings-daemon (45.0-2) unstable; urgency=medium
+
+  * Team upload
+
+  [ Chris Hofstaedtler ]
+  * Use udevdir from udev.pc to determine udev rules install path
+    (Closes: #1057245)
+
+  [ Simon McVittie ]
+  * d/control, d/rules: Stop generating d/control from d/control.in
+  * d/control: Remove version constraints unnecessary since Debian 11
+    - remove versions from most versioned dependencies
+    - remove obsolete versioned Breaks/Replaces
+  * Remove obsolete maintscript handling unnecessary since Debian 11
+  * Canonicalize order of unordered lists (wrap-and-sort -ab)
+    - installed files
+    - dependencies
+    - Uploaders
+  * Standards-Version: 4.6.2 (no changes required)
+  * d/source/lintian-overrides: Suppress dh-exec-subst-unknown-variable
+    for env:deb_udevdir in the solution to #1057245
+  * d/gnome-settings-daemon.lintian-overrides: Suppress long-standing false
+    positive #1031037
+  * d/g-s-d-common.lintian-overrides: Suppress false positive for
+    appstream-metadata-missing-modalias-provide.
+    The purpose of <provides><modalias> is to get hardware support
+    packages to be installed on systems with specific categories
+    of hardware. gnome-settings-daemon is automatically installed on
+    systems that have the GNOME desktop environment, but doesn't make
+    much sense to install on systems that don't have GNOME, so it would
+    be inappropriate to ask for it to be installed on laptops that run
+    some other desktop environment and happen to have rfkill devices.
+
+ -- Simon McVittie <smcv@debian.org>  Sun, 24 Dec 2023 14:06:34 +0000
+
 gnome-settings-daemon (45.0-1ubuntu1) mantic; urgency=medium
 
   * Merge with Debian. Remaining changes:

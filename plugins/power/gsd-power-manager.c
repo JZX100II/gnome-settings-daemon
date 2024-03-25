@@ -221,6 +221,8 @@ struct _GsdPowerManager
         GsdPowerIdleMode         previous_idle_mode;
 
         guint                    xscreensaver_watchdog_timer_id;
+
+        gint saved_brightness;
 };
 
 enum {
@@ -1277,6 +1279,10 @@ backlight_enable (GsdPowerManager *manager)
                 g_warning ("failed to turn the panel on: %s",
                            error->message);
                 g_error_free (error);
+        } else {
+                if (manager->saved_brightness > 0) {
+                        gsd_backlight_set_brightness_async(manager->backlight, manager->saved_brightness, NULL, NULL, NULL);
+                }
         }
 
         g_debug ("TESTSUITE: Unblanked screen");
@@ -1287,6 +1293,12 @@ backlight_disable (GsdPowerManager *manager)
 {
         gboolean ret;
         GError *error = NULL;
+        gint current_brightness = 0, max_brightness, min_brightness;
+
+        current_brightness = gsd_backlight_get_current_brightness(manager->backlight);
+        max_brightness = gsd_backlight_get_max_brightness(manager->backlight);
+        min_brightness = gsd_backlight_get_min_brightness(manager->backlight);
+        manager->saved_brightness = (current_brightness * 100) / max_brightness;
 
         iio_proxy_claim_light (manager, FALSE);
         ret = gnome_rr_screen_set_dpms_mode (manager->rr_screen,
@@ -1296,6 +1308,9 @@ backlight_disable (GsdPowerManager *manager)
                 g_warning ("failed to turn the panel off: %s",
                            error->message);
                 g_error_free (error);
+        } else {
+                gsd_backlight_set_brightness_min(manager->backlight, 0);
+                gsd_backlight_set_brightness_async(manager->backlight, 0, NULL, NULL, NULL);
         }
 
         g_debug ("TESTSUITE: Blanked screen");

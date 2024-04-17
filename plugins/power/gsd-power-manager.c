@@ -173,6 +173,7 @@ struct _GsdPowerManager
         /* Brightness */
         GsdBacklight            *backlight;
         gint                     pre_dim_brightness; /* level, not percentage */
+        gint                     saved_brightness;
 
         /* Keyboard */
         GDBusProxy              *upower_kbd_proxy;
@@ -221,8 +222,6 @@ struct _GsdPowerManager
         GsdPowerIdleMode         previous_idle_mode;
 
         guint                    xscreensaver_watchdog_timer_id;
-
-        gint                     saved_brightness;
 };
 
 enum {

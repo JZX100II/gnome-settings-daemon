@@ -1283,6 +1283,27 @@ backlight_enable (GsdPowerManager *manager)
                 g_error_free (error);
         } else {
                 if (manager->saved_brightness > 0) {
+                        // at least on k6877 platform, we might need to sleep a bit after dpm activation
+                        if (g_file_test ("/usr/lib/droidian/device/backlight-sleep", G_FILE_TEST_EXISTS)) {
+                                gchar *content = NULL;
+                                gsize length = 0;
+                                GError *file_error = NULL;
+                                if (g_file_get_contents ("/usr/lib/droidian/device/backlight-sleep", &content, &length, &file_error)) {
+                                        double sec = g_ascii_strtod (content, NULL);
+                                        if (sec > 0) {
+                                                int milisec = (int) (sec * 1000000);
+                                                g_debug ("Backlight sleep detected, sleeping for %d", milisec);
+                                                g_usleep (milisec);
+                                        }
+
+                                        g_free (content);
+                                } else {
+                                        if (file_error != NULL) {
+                                                g_error_free (file_error);
+                                        }
+                                }
+                        }
+
                         gsd_backlight_set_brightness_async (manager->backlight, manager->saved_brightness, NULL, NULL, NULL);
                 }
         }

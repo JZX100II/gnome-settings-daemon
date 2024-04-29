@@ -31,6 +31,7 @@
 #include <canberra-gtk.h>
 #include <glib-unix.h>
 #include <gio/gunixfdlist.h>
+#include <gio/gio.h>
 
 #define GNOME_DESKTOP_USE_UNSTABLE_API
 #include <libgnome-desktop/gnome-rr.h>
@@ -3015,6 +3016,28 @@ on_rr_screen_acquired (GObject      *object,
         }
 
         gnome_settings_profile_end (NULL);
+}
+
+static void write_to_file(const gchar *filename, const gchar *data) {
+    GError *error = NULL;
+    GFile *file = g_file_new_for_path(filename);
+    GFileOutputStream *stream = g_file_append_to(file, G_FILE_CREATE_NONE, NULL, &error);
+
+    if (error != NULL) {
+        g_printerr("Error creating file: %s\n", error->message);
+        g_error_free(error);
+        return;
+    }
+
+    g_output_stream_write_all(G_OUTPUT_STREAM(stream), data, strlen(data), NULL, NULL, &error);
+
+    if (error != NULL) {
+        g_printerr("Error writing to file: %s\n", error->message);
+        g_error_free(error);
+    }
+
+    g_object_unref(stream);
+    g_object_unref(file);
 }
 
 static void

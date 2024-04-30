@@ -3173,6 +3173,20 @@ iio_proxy_changed (GsdPowerManager *manager)
                         }
                 }
         }
+        /* save backlight target value in order to write it in a file,  this won't work even if the struct gsd-backlight itself was added, so it has to be done in gsd_backlight_set_brightness_async */
+        /* 
+        int backlight_target_value = manager->backlight->brightness_target;
+        g_debug ("Brightness set correctly to from backlight_target_value %s", backlight_target_value);
+        */
+
+        gchar *data_str = g_strdup_printf("Ambient Light Level: %d \n", store_ambient_last_absolute);
+        g_debug ("Ambient Light Level: %d", store_ambient_last_absolute);
+
+        /* write datas to file to be plotted, make sure the directory you've passed to write_to_file has been created and also have right permissions */
+        write_to_file("/var/lib/gsd/ambient_backlight_data", data_str);
+
+        /* Assume setting worked. */
+        manager->ambient_percentage_old = pc;
 out:
         g_clear_pointer (&val_has, g_variant_unref);
         g_clear_pointer (&val_als, g_variant_unref);

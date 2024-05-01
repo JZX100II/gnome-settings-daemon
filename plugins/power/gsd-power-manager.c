@@ -3179,11 +3179,13 @@ iio_proxy_changed (GsdPowerManager *manager)
         g_debug ("Brightness set correctly to from backlight_target_value %s", backlight_target_value);
         */
 
-        gchar *data_str = g_strdup_printf("Ambient Light Level: %d \n", store_ambient_last_absolute);
-        g_debug ("Ambient Light Level: %d", store_ambient_last_absolute);
+        gchar *data_str = g_strdup_printf("Ambient Light Level: %f \n", store_ambient_last_absolute);
+        g_debug ("Ambient Light Level: %f", store_ambient_last_absolute);
 
         /* write datas to file to be plotted, make sure the directory you've passed to write_to_file has been created and also have right permissions */
         write_to_file("/var/lib/gsd/ambient_backlight_data", data_str);
+
+        g_free(data_str);
 
         /* Assume setting worked. */
         manager->ambient_percentage_old = pc;

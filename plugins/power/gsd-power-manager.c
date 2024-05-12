@@ -31,6 +31,7 @@
 #include <canberra-gtk.h>
 #include <glib-unix.h>
 #include <gio/gunixfdlist.h>
+#include <gio/gio.h>
 
 #define GNOME_DESKTOP_USE_UNSTABLE_API
 #include <libgnome-desktop/gnome-rr.h>
@@ -2995,6 +2996,28 @@ on_rr_screen_acquired (GObject      *object,
         gnome_settings_profile_end (NULL);
 }
 
+static void write_to_file(const gchar *filename, const gchar *data) {
+    GError *error = NULL;
+    GFile *file = g_file_new_for_path(filename);
+    GFileOutputStream *stream = g_file_append_to(file, G_FILE_CREATE_NONE, NULL, &error);
+
+    if (error != NULL) {
+        g_printerr("Error creating file: %s\n", error->message);
+        g_error_free(error);
+        return;
+    }
+
+    g_output_stream_write_all(G_OUTPUT_STREAM(stream), data, strlen(data), NULL, NULL, &error);
+
+    if (error != NULL) {
+        g_printerr("Error writing to file: %s\n", error->message);
+        g_error_free(error);
+    }
+
+    g_object_unref(stream);
+    g_object_unref(file);
+}
+
 static void
 iio_proxy_changed (GsdPowerManager *manager)
 {
@@ -3023,6 +3046,10 @@ iio_proxy_changed (GsdPowerManager *manager)
                 goto out;
         manager->ambient_last_absolute = g_variant_get_double (val_als);
         g_debug ("Read last absolute light level: %f", manager->ambient_last_absolute);
+
+        /* store ambient last absolute result to be able to write it in a file */
+        double store_ambient_last_absolute = manager->ambient_last_absolute;
+        g_debug ("Read last absolute light level from store_ambient_last_absolute: %f", store_ambient_last_absolute);
 
         /* set new value */
         if (!g_settings_get_boolean (manager->settings_droidian_power, "auto-brightness-linear")) {
@@ -3059,6 +3086,20 @@ iio_proxy_changed (GsdPowerManager *manager)
 
                 if (manager->backlight)
                         gsd_backlight_set_brightness_async (manager->backlight, pc, NULL, NULL, NULL);
+                
+                /* save backlight target value in order to write it in a file,  this won't work even if the struct gsd-backlight itself was added, so it has to be done in gsd_backlight_set_brightness_async */
+                /* 
+                int backlight_target_value = manager->backlight->brightness_target;
+                g_debug ("Brightness set correctly to from backlight_target_value %s", backlight_target_value);
+                */
+
+                gchar *data_str = g_strdup_printf("Ambient Light Level: %f \n", store_ambient_last_absolute);
+                g_debug ("Ambient Light Level: %f", store_ambient_last_absolute);
+
+                /* write datas to file to be plotted, make sure the directory you've passed to write_to_file has been created and also have right permissions */
+                write_to_file("/var/lib/gsd/ambient_backlight_data", data_str);
+
+                g_free(data_str);
 
                 /* Assume setting worked. */
                 manager->ambient_percentage_old = pc;

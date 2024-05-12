@@ -3184,9 +3184,10 @@ check_ambient_cb (GsdPowerManager *manager)
                 gnome_rr_screen_get_dpms_mode (manager->rr_screen,
                                                &mode,
                                                NULL);
-                if (mode == 3)
+                if (mode == 3){
                         g_debug ("Display DPM is off, skipping");
                         return;
+                }
 
 
                 if (manager->brightness_old < linear_brightness) {

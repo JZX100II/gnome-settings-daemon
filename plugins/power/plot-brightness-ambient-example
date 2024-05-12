@@ -1,0 +1,31 @@
+# this example shows how you can plot brightness vs ambient written previously in a file to find out wether it's linear or not 
+# when the ambient light level is higher than a certain amount, the brightness will be set to 255, so you can use threshold to limit ambient light's maximum
+
+'''
+import matplotlib.pyplot as plt
+import numpy as np
+
+x = []
+y = []
+
+threshold = 512
+
+with open('ambient_backlight_data', 'r') as file:
+  lines = file.readlines()
+
+  for line in lines:
+    words = line.split()
+
+    if 'Brightness' in words:
+        y.append(float(words[2]))
+    elif 'Ambient' in words:
+      if float(words[3]) > threshold:
+        del y[-1]
+      else:
+        x.append(float(words[3]))
+
+plt.scatter(x, y)
+plt.xticks(np.linspace(min(x), max(x), num=10))
+plt.xlabel("Ambient light level")
+plt.ylabel("Brightness level") 
+'''

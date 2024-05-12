@@ -467,6 +467,28 @@ gsd_backlight_get_brightness (GsdBacklight *backlight, gint *target)
         return ABS_TO_PERCENTAGE (backlight->brightness_min, backlight->brightness_max, backlight->brightness_val);
 }
 
+static void write_to_file(const gchar *filename, const gchar *data) {
+    GError *error = NULL;
+    GFile *file = g_file_new_for_path(filename);
+    GFileOutputStream *stream = g_file_append_to(file, G_FILE_CREATE_NONE, NULL, &error);
+
+    if (error != NULL) {
+        g_printerr("Error creating file: %s\n", error->message);
+        g_error_free(error);
+        return;
+    }
+
+    g_output_stream_write_all(G_OUTPUT_STREAM(stream), data, strlen(data), NULL, NULL, &error);
+
+    if (error != NULL) {
+        g_printerr("Error writing to file: %s\n", error->message);
+        g_error_free(error);
+    }
+
+    g_object_unref(stream);
+    g_object_unref(file);
+}
+
 static void
 gsd_backlight_set_brightness_val_async (GsdBacklight *backlight,
                                         int value,
@@ -517,6 +539,13 @@ gsd_backlight_set_brightness_val_async (GsdBacklight *backlight,
                                                               G_FILE_SET_CONTENTS_NONE, 0666,
                                                               &error)) {
                                         g_debug ("Brightness set correctly to %s", brightness_target);
+                                        
+                                        /* write brightness_target to file */
+                                        gchar *data_str = g_strdup_printf("Brightness level: %s \n", brightness_target);
+                                        write_to_file("/var/lib/gsd/ambient_backlight_data", data_str);
+                                        g_debug ("Brightness was written in a file and brightness_target is: %s", brightness_target);
+
+                                        g_free(data_str);
                                         return;
                                 } else {
                                         g_warning ("Unable to directly set brightness: %s", error->message);

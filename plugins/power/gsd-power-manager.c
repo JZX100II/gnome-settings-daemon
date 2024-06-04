@@ -253,6 +253,7 @@ static void      idle_became_active_cb (GnomeIdleMonitor *monitor, guint watch_i
 static void      iio_proxy_changed (GsdPowerManager *manager);
 static void      iio_proxy_changed_cb (GDBusProxy *proxy, GVariant *changed_properties, GStrv invalidated_properties, gpointer user_data);
 static gint      get_linear_brightness (GsdPowerManager *manager);
+static gboolean  gsd_screensaver_get_active (GsdScreenSaver *screensaver_proxy);
 static gboolean  check_ambient_cb (GsdPowerManager *manager);
 static void      setup_linear_brightness_points (GsdPowerManager *manager);
 
@@ -3227,6 +3228,28 @@ get_linear_brightness (GsdPowerManager *manager)
 }
 
 static gboolean
+gsd_screensaver_get_active (GsdScreenSaver *screensaver_proxy)
+{
+        GVariant *result;
+        gboolean active = FALSE;
+
+        result = g_dbus_proxy_call_sync (G_DBUS_PROXY (screensaver_proxy),
+                                         "GetActive",
+                                         NULL,
+                                         G_DBUS_CALL_FLAGS_NONE,
+                                         -1,
+                                         NULL,
+                                         NULL);
+
+        if (result) {
+                g_variant_get (result, "(b)", &active);
+                g_variant_unref (result);
+        }
+
+        return active;
+}
+
+static gboolean
 check_ambient_cb (GsdPowerManager *manager)
 {
         gint linear_brightness;
@@ -3254,15 +3277,26 @@ check_ambient_cb (GsdPowerManager *manager)
                         while (manager->brightness_old != linear_brightness) {
                                 manager->brightness_old += 1;
                                 gsd_backlight_set_brightness_async (manager->backlight, manager->brightness_old, NULL, NULL, NULL);
+
+                                if (gsd_screensaver_get_active (manager->screensaver_proxy)) {
+                                        g_debug ("Screensaver turned active in the middle of setting brightness, stopping");
+                                        return G_SOURCE_REMOVE;
+                                }
+
                                 g_usleep (70000);
                         }
-
                 } else if (manager->brightness_old > linear_brightness && (manager->brightness_old - linear_brightness) >
                                    g_settings_get_int (manager->settings_droidian_power, "min-step-down")) {
                         g_debug ("Setting brightness smooth from: %i%% to %i%%", manager->brightness_old, linear_brightness);
                         while (manager->brightness_old != linear_brightness) {
                                 manager->brightness_old -= 1;
                                 gsd_backlight_set_brightness_async (manager->backlight, manager->brightness_old, NULL, NULL, NULL);
+
+                                if (gsd_screensaver_get_active (manager->screensaver_proxy)) {
+                                        g_debug ("Screensaver turned active in the middle of setting brightness, stopping");
+                                        return G_SOURCE_REMOVE;
+                                }
+
                                 g_usleep(70000);
                         }
                 }

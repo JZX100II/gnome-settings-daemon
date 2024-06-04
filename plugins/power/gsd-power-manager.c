@@ -1271,6 +1271,10 @@ static void
 backlight_enable (GsdPowerManager *manager)
 {
         gboolean ret;
+        gint min_brightness;
+
+        min_brightness = g_settings_get_int (manager->settings_droidian_power,
+                                             "min-brightness-level");
         GError *error = NULL;
 
         iio_proxy_claim_light (manager, TRUE);
@@ -1305,6 +1309,9 @@ backlight_enable (GsdPowerManager *manager)
                         }
 
                         gsd_backlight_set_brightness_async (manager->backlight, manager->saved_brightness, NULL, NULL, NULL);
+
+                        if (manager->backlight)
+                                gsd_backlight_set_brightness_min (manager->backlight, min_brightness);
                 }
         }
 

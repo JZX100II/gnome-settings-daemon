@@ -1711,7 +1711,14 @@ display_backlight_dim (GsdPowerManager *manager,
                 return;
 
         manager->pre_dim_brightness = brightness;
-        gsd_backlight_set_brightness_async (manager->backlight, idle_percentage, NULL, NULL, NULL);
+
+        while (brightness > idle_percentage) {
+
+                brightness -= 1;
+                gsd_backlight_set_brightness_async (manager->backlight, brightness, NULL, NULL, NULL);
+
+                g_usleep(20000);
+        }
 }
 
 static gboolean

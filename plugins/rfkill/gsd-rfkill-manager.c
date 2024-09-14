@@ -91,6 +91,8 @@ struct _GsdRfkillManager
         GBinding                *rfkill_input_inhibit_binding;
 
         gchar                   *chassis_type;
+
+        gboolean                airplane_mode;
 };
 
 #define GSD_DBUS_NAME "org.gnome.SettingsDaemon"
@@ -253,6 +255,9 @@ engine_get_has_wwan_airplane_mode (GsdRfkillManager *manager)
 static gboolean
 engine_get_airplane_mode (GsdRfkillManager *manager)
 {
+	if (manager->airplane_mode)
+		return TRUE;
+
 	if (!manager->wwan_interesting)
 		return engine_get_airplane_mode_helper (manager->killswitches);
         /* wwan enabled? then airplane mode is off (because an USB modem
@@ -477,10 +482,123 @@ engine_set_wwan_airplane_mode (GsdRfkillManager *manager,
         return TRUE;
 }
 
+static void
+set_modem_powered_cb (GObject      *source_object,
+                      GAsyncResult *res,
+                      gpointer      user_data)
+{
+        GError *error = NULL;
+        GVariant *result;
+
+        result = g_dbus_proxy_call_finish (G_DBUS_PROXY (source_object), res, &error);
+        if (error) {
+                g_warning ("Failed to set modem Powered property: %s", error->message);
+                g_error_free (error);
+        }
+        if (result)
+                g_variant_unref (result);
+}
+
+static void
+process_modem (GDBusConnection *system_connection,
+               const gchar     *modem_path,
+               gboolean         enable,
+               GCancellable    *cancellable)
+{
+        GDBusProxy *proxy;
+        GError *error = NULL;
+
+        proxy = g_dbus_proxy_new_sync (system_connection,
+                                       G_DBUS_PROXY_FLAGS_NONE,
+                                       NULL,
+                                       "org.ofono",
+                                       modem_path,
+                                       "org.ofono.Modem",
+                                       cancellable,
+                                       &error);
+
+        if (error) {
+                g_warning ("Failed to create proxy for modem %s: %s", modem_path, error->message);
+                g_error_free (error);
+                return;
+        }
+
+        g_dbus_proxy_call (proxy,
+                           "SetProperty",
+                           g_variant_new ("(sv)", "Powered", g_variant_new_boolean (!enable)),
+                           G_DBUS_CALL_FLAGS_NONE,
+                           -1,
+                           cancellable,
+                           set_modem_powered_cb,
+                           NULL);
+
+        g_object_unref (proxy);
+}
+
+static void
+get_modems_cb (GObject      *source_object,
+               GAsyncResult *res,
+               gpointer      user_data)
+{
+        GsdRfkillManager *manager = user_data;
+        GError *error = NULL;
+        GVariant *result, *modems;
+        GVariantIter iter;
+        gchar *modem_path;
+        GVariant *modem_properties;
+        GDBusConnection *system_connection;
+
+        system_connection = G_DBUS_CONNECTION (source_object);
+        result = g_dbus_connection_call_finish (system_connection, res, &error);
+        if (error) {
+                g_warning ("Failed to get modems: %s", error->message);
+                g_error_free (error);
+                g_object_unref (system_connection);
+                return;
+        }
+
+        modems = g_variant_get_child_value (result, 0);
+        g_variant_iter_init (&iter, modems);
+        while (g_variant_iter_next (&iter, "(&oa{sv})", &modem_path, &modem_properties)) {
+                process_modem (system_connection, modem_path, manager->airplane_mode, manager->cancellable);
+                g_variant_unref (modem_properties);
+        }
+
+        g_variant_unref (modems);
+        g_variant_unref (result);
+        g_object_unref (system_connection);
+}
+
 static gboolean
 engine_set_airplane_mode (GsdRfkillManager *manager,
                           gboolean          enable)
 {
+        GDBusConnection *system_connection;
+        GError *error = NULL;
+
+        /* manager->connection is session ¯\_(ツ)_/¯ */
+        system_connection = g_bus_get_sync (G_BUS_TYPE_SYSTEM, manager->cancellable, &error);
+        if (error) {
+                g_warning ("Failed to connect to system bus: %s", error->message);
+                g_error_free (error);
+        } else {
+                /* Set airplane mode for oFono modems */
+                g_dbus_connection_call (system_connection,
+                                        "org.ofono",
+                                        "/",
+                                        "org.ofono.Manager",
+                                        "GetModems",
+                                        NULL,
+                                        G_VARIANT_TYPE ("(a(oa{sv}))"),
+                                        G_DBUS_CALL_FLAGS_NONE,
+                                        -1, /* timeout */
+                                        manager->cancellable,
+                                        get_modems_cb,
+                                        manager);
+                manager->airplane_mode = enable;
+        }
+
+#if 0
         cc_rfkill_glib_send_change_all_event (manager->rfkill, RFKILL_TYPE_ALL,
                                               enable, manager->cancellable, rfkill_set_cb, manager);
 
@@ -498,6 +616,7 @@ engine_set_airplane_mode (GsdRfkillManager *manager,
                                    manager->cancellable,
                                    set_wwan_complete, NULL);
         }
+#endif
 
 	return TRUE;
 }

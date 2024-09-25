@@ -449,12 +449,87 @@ set_wwan_complete (GObject      *object,
         }
 }
 
+static void
+set_bluez_hci_powered_state (gboolean enable)
+{
+        GDBusConnection *connection;
+        GError *error = NULL;
+        GVariant *objects;
+        GVariantIter *iter;
+        gchar *object_path;
+        GVariant *ifaces_and_properties;
+
+        connection = g_bus_get_sync (G_BUS_TYPE_SYSTEM, NULL, &error);
+        if (error != NULL) {
+                g_warning ("Failed to get system bus: %s", error->message);
+                g_error_free (error);
+                return;
+        }
+
+        objects = g_dbus_connection_call_sync (connection,
+                                               "org.bluez",
+                                               "/",
+                                               "org.freedesktop.DBus.ObjectManager",
+                                               "GetManagedObjects",
+                                               NULL,
+                                               G_VARIANT_TYPE ("(a{oa{sa{sv}}})"),
+                                               G_DBUS_CALL_FLAGS_NONE,
+                                               -1,
+                                               NULL,
+                                               &error);
+
+        if (error != NULL) {
+                g_warning ("Failed to get Bluez objects: %s", error->message);
+                g_error_free (error);
+                g_object_unref (connection);
+                return;
+        }
+
+        g_variant_get (objects, "(a{oa{sa{sv}}})", &iter);
+        while (g_variant_iter_next (iter, "{oa{sa{sv}}}", &object_path, &ifaces_and_properties)) {
+                if (g_str_has_prefix (object_path, "/org/bluez/hci")) {
+                        GVariant *result;
+
+                        result = g_dbus_connection_call_sync (connection,
+                                                              "org.bluez",
+                                                              object_path,
+                                                              "org.freedesktop.DBus.Properties",
+                                                              "Set",
+                                                              g_variant_new ("(ssv)",
+                                                                             "org.bluez.Adapter1",
+                                                                             "Powered",
+                                                                             g_variant_new_boolean (enable)),
+                                                              NULL,
+                                                              G_DBUS_CALL_FLAGS_NONE,
+                                                              -1,
+                                                              NULL,
+                                                              &error);
+
+                        if (error != NULL) {
+                                g_warning ("Failed to set Powered property for %s: %s", object_path, error->message);
+                                g_error_free (error);
+                                error = NULL;
+                        } else {
+                                g_variant_unref (result);
+                        }
+                }
+                g_free (object_path);
+                g_variant_unref (ifaces_and_properties);
+        }
+
+        g_variant_iter_free (iter);
+        g_variant_unref (objects);
+        g_object_unref (connection);
+}
+
 static gboolean
 engine_set_bluetooth_airplane_mode (GsdRfkillManager *manager,
                                     gboolean          enable)
 {
         cc_rfkill_glib_send_change_all_event (manager->rfkill, RFKILL_TYPE_BLUETOOTH,
                                               enable, manager->cancellable, rfkill_set_cb, manager);
+
+        set_bluez_hci_powered_state (!enable);
 
         return TRUE;
 }

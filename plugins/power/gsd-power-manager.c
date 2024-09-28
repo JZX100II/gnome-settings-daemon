@@ -176,6 +176,7 @@ struct _GsdPowerManager
         /* Brightness */
         GsdBacklight            *backlight;
         gint                     pre_dim_brightness; /* level, not percentage */
+        gint                     saved_brightness;
 
         /* Keyboard */
         GDBusProxy              *upower_kbd_proxy;
@@ -1316,6 +1317,10 @@ backlight_enable (GsdPowerManager *manager)
         iio_proxy_claim_light (manager, TRUE);
         set_power_saving_mode (manager, GSD_POWER_SAVE_MODE_ON);
 
+        if (manager->saved_brightness > 0) {
+                gsd_backlight_set_brightness_async (manager->backlight, manager->saved_brightness, NULL, NULL, NULL);
+        }
+
         g_debug ("TESTSUITE: Unblanked screen");
 }
 
@@ -1324,8 +1329,17 @@ backlight_disable (GsdPowerManager *manager)
 {
         stop_linear_brightness (manager);
 
+        gint current_brightness = 0, max_brightness, min_brightness;
+        current_brightness = gsd_backlight_get_cur_brightness (manager->backlight);
+        max_brightness = gsd_backlight_get_max_brightness (manager->backlight);
+        min_brightness = gsd_backlight_get_min_brightness (manager->backlight);
+        manager->saved_brightness = (current_brightness * 100) / max_brightness;
+
         iio_proxy_claim_light (manager, FALSE);
         set_power_saving_mode (manager, GSD_POWER_SAVE_MODE_OFF);
+
+        gsd_backlight_set_brightness_min (manager->backlight, 0);
+        gsd_backlight_set_brightness_async (manager->backlight, 0, NULL, NULL, NULL);
 
         g_debug ("TESTSUITE: Blanked screen");
 }

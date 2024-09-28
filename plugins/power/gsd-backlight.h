@@ -68,6 +68,12 @@ gint gsd_backlight_cycle_up_finish       (GsdBacklight         *backlight,
 
 const char*  gsd_backlight_get_connector (GsdBacklight         *backlight);
 
+gint gsd_backlight_get_min_brightness    (GsdBacklight *backlight);
+gint gsd_backlight_get_max_brightness    (GsdBacklight *backlight);
+gint gsd_backlight_get_cur_brightness    (GsdBacklight *backlight);
+void gsd_backlight_set_brightness_min    (GsdBacklight         *backlight,
+                                          gint                  brightness);
+
 GsdBacklight* gsd_backlight_new          (GError              **error);
 
 

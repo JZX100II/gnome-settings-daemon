@@ -795,6 +795,63 @@ gsd_backlight_get_connector (GsdBacklight *backlight)
         return backlight->backlight_connector;
 }
 
+/**
+ * gsd_backlight_get_min_brightness:
+ * @backlight: a #GsdBacklight
+ *
+ * Retrieves the minimum brightness level of the backlight stored in the struct.
+ *
+ * Returns: The minimum brightness level as an integer.
+ **/
+gint
+gsd_backlight_get_min_brightness (GsdBacklight *backlight)
+{
+        g_return_val_if_fail (G_IS_OBJECT (backlight), -1);
+        return backlight->brightness_min;
+}
+
+/**
+ * gsd_backlight_get_max_brightness:
+ * @backlight: a #GsdBacklight
+ *
+ * Retrieves the maximum brightness level of the backlight stored in the struct.
+ *
+ * Returns: The maximum brightness level as an integer.
+ **/
+gint
+gsd_backlight_get_max_brightness (GsdBacklight *backlight)
+{
+        g_return_val_if_fail (G_IS_OBJECT (backlight), -1);
+        return backlight->brightness_max;
+}
+
+/**
+ * gsd_backlight_get_cur_brightness:
+ * @backlight: a #GsdBacklight
+ *
+ * Retrieves the maximum brightness level of the backlight stored in the struct.
+ *
+ * Returns: The current brightness level as an integer.
+ **/
+gint
+gsd_backlight_get_cur_brightness (GsdBacklight *backlight)
+{
+        g_return_val_if_fail (G_IS_OBJECT (backlight), -1);
+        return backlight->brightness_target;
+}
+
+/**
+ * gsd_backlight_set_brightness_min
+ * @backlight: a #GsdBacklight
+ *
+ * Change minimal brightness value
+ **/
+void
+gsd_backlight_set_brightness_min (GsdBacklight *backlight, gint brightness)
+{
+        backlight->brightness_min = brightness;
+}
+
 static void
 gsd_backlight_get_property (GObject    *object,
                             guint       prop_id,

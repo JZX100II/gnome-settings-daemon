@@ -6,5 +6,10 @@
       <summary>Disables enabling display on wakeup from suspend</summary>
       <description>If the display should not be woken up on resume from suspend. On a mobile device you most likely want to enable this.</description>
     </key>
+    <key name="min-brightness-level" type="i">
+      <default>5</default>
+      <summary>Minimimal brightness value (raw value) when panel is on</summary>
+      <description>Minimal brightness value (raw value) to use when brightness slider at 0 and panel still on</description>
+    </key>
   </schema>
 </schemalist>

@@ -1314,6 +1314,9 @@ set_power_saving_mode (GsdPowerManager  *manager,
 static void
 backlight_enable (GsdPowerManager *manager)
 {
+        gint min_brightness;
+        min_brightness = g_settings_get_int (manager->settings_droidian_power,
+                                             "min-brightness-level");
         iio_proxy_claim_light (manager, TRUE);
         set_power_saving_mode (manager, GSD_POWER_SAVE_MODE_ON);
 
@@ -1338,6 +1341,9 @@ backlight_enable (GsdPowerManager *manager)
                         }
                 }
                 gsd_backlight_set_brightness_async (manager->backlight, manager->saved_brightness, NULL, NULL, NULL);
+
+                if (manager->backlight)
+                        gsd_backlight_set_brightness_min (manager->backlight, min_brightness);
         }
 
         g_debug ("TESTSUITE: Unblanked screen");

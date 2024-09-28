@@ -37,7 +37,7 @@
       <description>If the ambient light sensor functionality is enabled.</description>
     </key>
     <key name="ambient-brightness-points" type="a{ii}">
-      <default>{}</default>
+      <default>{0: 0, 5: 5, 30: 10, 200: 25, 500: 45, 1000: 65, 1500: 85, 2500: 100}</default>
       <summary>Dictionnary of ambient points for brightness calculation</summary>
       <description>
         Key is ambient light as lux, value is the brightness as %. Ambient keys should be sorted.

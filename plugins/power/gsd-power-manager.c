@@ -91,6 +91,10 @@
 /* Convert bandwidth to time constant.  Units of constant are microseconds. */
 #define GSD_AMBIENT_TIME_CONSTANT       (G_USEC_PER_SEC * 1.0f / (2.0f * G_PI * GSD_AMBIENT_BANDWIDTH_HZ))
 
+/* wait before dimming the screen*/
+#define GSD_SCREEN_IDLE_DIM_DELAY_LOW_BATTERY 5000
+#define GSD_SCREEN_IDLE_DIM_DELAY_NORMAL 20000
+
 static const gchar introspection_xml[] =
 "<node>"
 "  <interface name='org.gnome.SettingsDaemon.Power.Screen'>"
@@ -1697,7 +1701,8 @@ backlight_notify_brightness_cb (GsdPowerManager *manager, GParamSpec *pspec, Gsd
 
 static void
 display_backlight_dim (GsdPowerManager *manager,
-                       gint idle_percentage)
+                       gint idle_percentage,
+                       guint delay_time)
 {
         gint brightness;
 
@@ -1717,7 +1722,7 @@ display_backlight_dim (GsdPowerManager *manager,
                 brightness -= 1;
                 gsd_backlight_set_brightness_async (manager->backlight, brightness, NULL, NULL, NULL);
 
-                g_usleep(20000);
+                g_usleep(delay_time);
         }
 }
 
@@ -1842,7 +1847,12 @@ idle_set_mode (GsdPowerManager *manager, GsdPowerIdleMode mode)
                 /* display backlight */
                 idle_percentage = g_settings_get_int (manager->settings,
                                                       "idle-brightness");
-                display_backlight_dim (manager, idle_percentage);
+                
+                if (manager->battery_is_low) {
+                        display_backlight_dim (manager, idle_percentage / 3, GSD_SCREEN_IDLE_DIM_DELAY_LOW_BATTERY);
+                } else {
+                        display_backlight_dim (manager, idle_percentage, GSD_SCREEN_IDLE_DIM_DELAY_NORMAL);
+                }
 
                 /* keyboard backlight */
                 ret = kbd_backlight_dim (manager, idle_percentage, &error);

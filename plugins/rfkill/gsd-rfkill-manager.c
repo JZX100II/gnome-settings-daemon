@@ -456,8 +456,7 @@ set_bluez_hci_powered_state (gboolean enable)
         GError *error = NULL;
         GVariant *objects;
         GVariantIter *iter;
-        gchar *object_path;
-        GVariant *ifaces_and_properties;
+        const gchar *object_path;
 
         connection = g_bus_get_sync (G_BUS_TYPE_SYSTEM, NULL, &error);
         if (error != NULL) {
@@ -486,10 +485,11 @@ set_bluez_hci_powered_state (gboolean enable)
         }
 
         g_variant_get (objects, "(a{oa{sa{sv}}})", &iter);
-        while (g_variant_iter_next (iter, "{oa{sa{sv}}}", &object_path, &ifaces_and_properties)) {
-                if (g_str_has_prefix (object_path, "/org/bluez/hci")) {
-                        GVariant *result;
 
+        while (g_variant_iter_next (iter, "{&o@a{sa{sv}}}", &object_path, NULL)) {
+                // only process adapter paths (like /org/bluez/hci0) and skip device paths (like /org/bluez/hci0/dev_XX_XX_XX)
+                if (g_str_has_prefix (object_path, "/org/bluez/hci") && !strstr (object_path, "/dev_")) {
+                        GVariant *result;
                         result = g_dbus_connection_call_sync (connection,
                                                               "org.bluez",
                                                               object_path,
@@ -513,8 +513,6 @@ set_bluez_hci_powered_state (gboolean enable)
                                 g_variant_unref (result);
                         }
                 }
-                g_free (object_path);
-                g_variant_unref (ifaces_and_properties);
         }
 
         g_variant_iter_free (iter);

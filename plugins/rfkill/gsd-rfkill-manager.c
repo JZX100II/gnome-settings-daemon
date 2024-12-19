@@ -608,6 +608,30 @@ process_modem (GDBusConnection *system_connection,
         g_object_unref (proxy);
 }
 
+static gboolean
+is_valid_modem_path (const gchar *path)
+{
+        const gchar *underscore;
+        const gchar *slash;
+
+        if (!path || path[0] != '/')
+                return FALSE;
+
+        /* Find the next slash after the first character */
+        slash = strchr (path + 1, '/');
+        if (slash != NULL)
+                return FALSE;  /* We only want root-level paths */
+
+        /* Find the underscore */
+        underscore = strchr (path + 1, '_');
+        if (!underscore)
+                return FALSE;
+
+        /* Must have at least one character before underscore (after the initial /)
+         * and at least one character after underscore */
+        return (underscore > path + 1) && (*(underscore + 1) != '\0');
+}
+
 static void
 get_modems_cb (GObject      *source_object,
                GAsyncResult *res,
@@ -617,8 +641,7 @@ get_modems_cb (GObject      *source_object,
         GError *error = NULL;
         GVariant *result, *modems;
         GVariantIter iter;
-        gchar *modem_path;
-        GVariant *modem_properties;
+        const gchar *modem_path;
         GDBusConnection *system_connection;
 
         system_connection = G_DBUS_CONNECTION (source_object);
@@ -632,9 +655,11 @@ get_modems_cb (GObject      *source_object,
 
         modems = g_variant_get_child_value (result, 0);
         g_variant_iter_init (&iter, modems);
-        while (g_variant_iter_next (&iter, "(&oa{sv})", &modem_path, &modem_properties)) {
-                process_modem (system_connection, modem_path, manager->airplane_mode, manager->cancellable);
-                g_variant_unref (modem_properties);
+        while (g_variant_iter_next (&iter, "(&oa{sv})", &modem_path, NULL)) {
+                if (is_valid_modem_path (modem_path)) {
+                        g_debug ("Processing modem %s", modem_path);
+                        process_modem (system_connection, modem_path, manager->airplane_mode, manager->cancellable);
+                }
         }
 
         g_variant_unref (modems);

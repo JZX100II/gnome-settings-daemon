@@ -141,6 +141,47 @@ gsd_rfkill_manager_init (GsdRfkillManager *manager)
 }
 
 static gboolean
+is_bus_available (const gchar *name)
+{
+        GDBusConnection *connection;
+        GVariant *result;
+        GError *error = NULL;
+        gboolean running = FALSE;
+
+        g_return_val_if_fail (name != NULL, FALSE);
+
+        connection = g_bus_get_sync (G_BUS_TYPE_SYSTEM, NULL, &error);
+        if (error != NULL) {
+                g_warning ("Failed to get system bus: %s", error->message);
+                g_error_free (error);
+                return FALSE;
+        }
+
+        result = g_dbus_connection_call_sync (connection,
+                                              "org.freedesktop.DBus",
+                                              "/org/freedesktop/DBus",
+                                              "org.freedesktop.DBus",
+                                              "NameHasOwner",
+                                              g_variant_new ("(s)", name),
+                                              G_VARIANT_TYPE ("(b)"),
+                                              G_DBUS_CALL_FLAGS_NONE,
+                                              -1,
+                                              NULL,
+                                              &error);
+
+        if (error != NULL) {
+                g_warning ("Failed to check for %s: %s", name, error->message);
+                g_error_free (error);
+        } else {
+                g_variant_get (result, "(b)", &running);
+                g_variant_unref (result);
+        }
+
+        g_object_unref (connection);
+        return running;
+}
+
+static gboolean
 engine_get_airplane_mode_helper (GHashTable *killswitches)
 {
 	GHashTableIter iter;
@@ -788,6 +829,14 @@ handle_get_property (GDBusConnection *connection,
         if (g_strcmp0 (property_name, "HasAirplaneMode") == 0) {
                 gboolean has_airplane_mode;
                 has_airplane_mode = engine_get_has_airplane_mode (manager);
+
+                if (is_bus_available ("org.freedesktop.ModemManager1") && manager->mm_client != NULL) {
+                        GList *objects;
+                        objects = g_dbus_object_manager_get_objects (manager->mm_client);
+                        manager->wwan_interesting = (objects != NULL);
+                        g_list_free_full (objects, g_object_unref);
+                }
+
                 return g_variant_new_boolean (has_airplane_mode);
         }
 

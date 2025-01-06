@@ -1342,7 +1342,21 @@ backlight_enable (GsdPowerManager *manager)
                                 }
                         }
                 }
+
+                g_debug ("Setting backlight to saved value: %d", manager->saved_brightness);
                 gsd_backlight_set_brightness_async (manager->backlight, manager->saved_brightness, NULL, NULL, NULL);
+
+                if (manager->backlight)
+                        gsd_backlight_set_brightness_min (manager->backlight, min_brightness);
+        } else if (manager->pre_dim_brightness > 0) {
+                g_debug ("Setting backlight to pre dim brightness: %d", manager->pre_dim_brightness);
+                gsd_backlight_set_brightness_async (manager->backlight, manager->pre_dim_brightness, NULL, NULL, NULL);
+
+                if (manager->backlight)
+                        gsd_backlight_set_brightness_min (manager->backlight, min_brightness);
+        } else {
+                g_debug ("No backlight value available, setting to 50%");
+                gsd_backlight_set_brightness_async (manager->backlight, 50, NULL, NULL, NULL);
 
                 if (manager->backlight)
                         gsd_backlight_set_brightness_min (manager->backlight, min_brightness);

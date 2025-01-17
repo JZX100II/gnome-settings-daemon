@@ -47,7 +47,6 @@ struct _GsdBacklight
         gint brightness_val;
         gint brightness_target;
         gint brightness_step;
-        gint brightness_saved;
 
         uint32_t backlight_serial;
         char *backlight_connector;
@@ -477,11 +476,6 @@ gsd_backlight_set_brightness_val_async (GsdBacklight *backlight,
 
         value = MIN(backlight->brightness_max, value);
         value = MAX(backlight->brightness_min, value);
-
-        if (backlight->brightness_saved == -1) {
-            backlight->brightness_saved = 1;
-            return;
-        }
 
         backlight->brightness_target = value;
 
@@ -1106,7 +1100,6 @@ gsd_backlight_init (GsdBacklight *backlight)
         backlight->brightness_max = -1;
         backlight->brightness_val = -1;
         backlight->brightness_step = 1;
-        backlight->brightness_saved = -1;
 
 #ifdef __linux__
         backlight->active_task = NULL;

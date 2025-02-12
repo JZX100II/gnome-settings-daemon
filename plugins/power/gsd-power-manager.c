@@ -1715,81 +1715,120 @@ backlight_notify_brightness_cb (GsdPowerManager *manager, GParamSpec *pspec, Gsd
                                       gsd_backlight_get_brightness (backlight, NULL), NULL);
 }
 
-static gchar *
-get_tty_session_path (GsdPowerManager *manager,
-                      const gchar *query_tty)
+static gboolean
+get_locked_hint (const gchar *session_path)
 {
-        if (manager->logind_proxy == NULL) {
-                g_warning("no systemd support");
-                return NULL;
-        }
-    
-        g_autoptr(GError) error = NULL;
-        g_autoptr(GVariant) reply = g_dbus_proxy_call_sync (manager->logind_proxy, "ListSessionsEx", NULL, G_DBUS_CALL_FLAGS_NONE, -1, NULL, &error);
-        gchar *query_session_path = NULL;
+    g_autoptr(GError) error = NULL;
+    g_autoptr(GDBusProxy) session_proxy = NULL;
+    g_autoptr(GVariant) result = NULL;
+    gboolean locked_hint;
 
-        if (reply != NULL && error == NULL) {
+    session_proxy = g_dbus_proxy_new_for_bus_sync (G_BUS_TYPE_SYSTEM,
+                                                   G_DBUS_PROXY_FLAGS_NONE,
+                                                   NULL,
+                                                   "org.freedesktop.login1",
+                                                   session_path,
+                                                   "org.freedesktop.login1.Session",
+                                                   NULL,
+                                                   &error);
+
+    if (error != NULL) {
+        g_debug ("Failed to create session proxy: %s", error->message);
+        return FALSE;
+    }
+
+    result = g_dbus_proxy_call_sync (session_proxy,
+                                    "org.freedesktop.DBus.Properties.Get",
+                                    g_variant_new("(ss)",
+                                                  "org.freedesktop.login1.Session",
+                                                  "LockedHint"),
+                                    G_DBUS_CALL_FLAGS_NONE,
+                                    /* timeout */ 500,
+                                    NULL,
+                                    &error);
+
+    if (error != NULL) {
+        g_debug("Error calling Get: %s", error->message);
+        return FALSE;
+    }
+
+    g_variant_get(result, "(v)", &result);
+    g_variant_get(result, "b", &locked_hint);
+
+    return locked_hint;
+}
+
+static void
+list_sessions_cb (GDBusConnection *connection, 
+                  GAsyncResult    *res, 
+                  gpointer         user_data)
+{
+        const gchar *query_tty = (const gchar *) user_data;
+        gchar *query_session_path = NULL;
+        g_autoptr(GVariant) result = NULL;
+        g_autoptr(GError) error = NULL;
+
+        result = g_dbus_connection_call_finish (connection, res, &error);
+
+        if (error) {
+                g_warning ("Error in list sessions callback: %s\n", error->message);
+                return;
+        }
+
+        if (result != NULL && error == NULL) {
                 g_autoptr(GVariantIter) iter = NULL;
-                g_variant_get(reply, "(a(sussussbto))", &iter);
+                g_variant_get (result, "(a(sussussbto))", &iter);
 
                 const gchar *session_id;
                 const gchar *session_path;
                 const gchar *tty;
-                while (g_variant_iter_loop(iter, "(sussussbto)", &session_id, NULL, NULL, NULL, NULL, NULL, &tty, NULL, NULL, &session_path)) {
-                        if (strcmp(tty, query_tty) == 0) {
+
+                while (g_variant_iter_loop (iter, "(sussussbto)", &session_id, NULL, NULL, NULL, NULL, NULL, &tty, NULL, NULL, &session_path)) {
+                        if (strcmp (tty, query_tty) == 0) {
                                 g_debug ("Found Session ID: %s, Session Path: %s, TTY: %s", session_id, session_path, tty);
-                                query_session_path = g_strdup(session_path);
+                                query_session_path = g_strdup (session_path);
                                 break;
                         }
                 }
         } else {
-                g_warning("Something went wrong in calling ListSessionsEx: %s", error->message);
+                g_debug ("Something went wrong in calling ListSessionsEx: %s", error->message);
         }
 
-    return query_session_path;
+        if (query_session_path) {
+                get_locked_hint (query_session_path);
+                g_free (query_session_path);
+        }
 }
 
-static gboolean
-get_locked_hint (const gchar *session_path)
+static void
+get_tty_session_path (GsdPowerManager *manager, 
+                      const gchar     *query_tty)
 {
+        if (manager->logind_proxy == NULL) {
+                g_debug ("no systemd support");
+        }
+
         g_autoptr(GError) error = NULL;
-        g_autoptr(GDBusProxy) session_proxy = NULL;
-        g_autoptr(GVariant) result = NULL;
-        gboolean locked_hint;
 
-        session_proxy = g_dbus_proxy_new_for_bus_sync (G_BUS_TYPE_SYSTEM,
-                                                       G_DBUS_PROXY_FLAGS_NONE,
-                                                       NULL,
-                                                       "org.freedesktop.login1",
-                                                       session_path,
-                                                       "org.freedesktop.login1.Session",
-                                                       NULL,
-                                                       &error);
+        GDBusConnection *system_connection;
+        system_connection = g_bus_get_sync (G_BUS_TYPE_SYSTEM, manager->cancellable, &error);
 
-        if (error != NULL) {
-                g_warning("Failed to create session proxy: %s", error->message);
-                return FALSE;
+        if (error) {
+                g_warning ("Failed to connect to system bus: %s", error->message);
         }
 
-        result = g_dbus_proxy_call_sync (session_proxy,
-                                         "org.freedesktop.DBus.Properties.Get",
-                                         g_variant_new("(ss)",
-                                         "org.freedesktop.login1.Session",
-                                         "LockedHint"),
-                                         G_DBUS_CALL_FLAGS_NONE,
-                                         /* timeout */ 500,
-                                         NULL,
-                                         &error);
-
-        if (error != NULL) {
-                g_warning("Error calling Get: %s", error->message);
-                return FALSE;
-        }
-
-        g_variant_get(result, "(v)", &result);
-        g_variant_get(result, "b", &locked_hint);
-
-        return locked_hint;
+        g_dbus_connection_call (system_connection,
+                                "org.freedesktop.login1",
+                                "/org/freedesktop/login1",
+                                "org.freedesktop.login1",
+                                "ListSessionsEx",
+                                NULL,
+                                G_VARIANT_TYPE("(a(sussussbto))"),
+                                G_DBUS_CALL_FLAGS_NONE,
+                                -1,
+                                manager->cancellable,
+                                (GAsyncReadyCallback) list_sessions_cb,
+                                (gpointer) query_tty);
 }
 
 static void
